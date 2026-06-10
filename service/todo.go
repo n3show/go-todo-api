@@ -7,6 +7,7 @@ import (
 
 type TodoService interface {
 	GetAll(userId int) ([]model.Todo, error)
+	GetById(id int) (model.Todo, error)
 	Create(todo model.Todo) error
 	Update(todo model.Todo) error
 	Delete(id int) error
@@ -24,6 +25,10 @@ func NewTodoService(todoRepository repository.TodoRepository) TodoService {
 
 func (s *todoService) GetAll(userId int) ([]model.Todo, error) {
 	return s.todoRepository.GetAll(userId)
+}
+
+func (s *todoService) GetById(id int) (model.Todo, error) {
+	return s.todoRepository.GetById(id)
 }
 
 func (s *todoService) Create(todo model.Todo) error {

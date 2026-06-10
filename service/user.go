@@ -88,7 +88,7 @@ func generateToken(userID int) (string, error) {
 	return token.SignedString(secretKey)
 }
 
-func parseToken(tokenString string) (*jwt.Token, error) {
+func ParseToken(tokenString string) (*jwt.Token, error) {
 	return jwt.Parse(tokenString, func(token *jwt.Token) (interface{}, error) {
 		return secretKey, nil
 	})

@@ -7,6 +7,7 @@ import (
 
 type TodoRepository interface {
 	GetAll(userId int) ([]model.Todo, error)
+	GetById(id int) (model.Todo, error)
 	Create(todo model.Todo) error
 	Update(todo model.Todo) error
 	Delete(id int) error
@@ -43,6 +44,16 @@ func (r *todoRepository) GetAll(userId int) ([]model.Todo, error) {
 	}
 
 	return todos, nil
+}
+
+func (r *todoRepository) GetById(id int) (model.Todo, error) {
+	var todo model.Todo
+
+	if err := r.db.QueryRow("SELECT id, user_id, title, done, created_at FROM todos WHERE id = $1", id).Scan(&todo.Id, &todo.UserId, &todo.Title, &todo.Done, &todo.CreatedAt); err != nil {
+		return model.Todo{}, err
+	}
+
+	return todo, nil
 }
 
 func (r *todoRepository) Create(todo model.Todo) error {
