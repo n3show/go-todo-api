@@ -110,7 +110,35 @@ func (h *todoHandler) Update(w http.ResponseWriter, r *http.Request) {
 }
 
 func (h *todoHandler) Delete(w http.ResponseWriter, r *http.Request) {
+	userId, err := getUserIdFromToken(r)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusUnauthorized)
+		return
+	}
 
+	id, err := strconv.Atoi(r.PathValue("id"))
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusBadRequest)
+		return
+	}
+
+	todo, err := h.todoService.GetById(id)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusNotFound)
+		return
+	}
+
+	if todo.UserId != userId {
+		w.WriteHeader(http.StatusForbidden)
+		return
+	}
+
+	if err := h.todoService.Delete(id); err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+
+	w.WriteHeader(http.StatusOK)
 }
 
 func getUserIdFromToken(r *http.Request) (int, error) {
